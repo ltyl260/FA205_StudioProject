@@ -125,16 +125,8 @@
 // >>**range** goes between 0(high sensitivity)-255(no sensitivity)
 // >> so rangeSlider can simply be set to the value of **255 - a**;
 
-// ### Arrays not stacks ###
-// i tried to use my arrays like a stack, popping and pushing them, push technically worked but upon inquiring into why pop wasnt working looks like p5.js has geared it more towards graphic functions and i honestly got stacks and arrays mixed up in my head
-// *yay time to fix all my comparison array assignments...*
-// >xmoved.push(compx[n]);                                                                              //#
-// >ymoved.push(compy[n]);                                                                              //#
-// >diffmoved.push(compdiff[n]); 
-// >>append(xmoved,compx[n]);                                                                       //#
-// >>append(ymoved,compy[n]);                                                                       //#
-// >>append(diffmoved,compdiff[n]);
-// now using shift i can 
+
+
 var video;
 var scaler = 15; // how pixelated is the screen Very(20) - impossibly detailed (1); 
 var duckScaler = 20;
@@ -150,7 +142,6 @@ var duckcount = 10; //100 runs slow!
 let rangeSlider;
 let duckCountSlider;
 let scalarSlider;
-var maxDucks = 200;
 
 class Duck {
   constructor(x,y){
@@ -263,106 +254,88 @@ function setup() {
   // scalarSlider.position(width-90, height);         //
   // scalarSlider.size(80);                           //
   // text('scalar',((width-65)),height-3);            //
-  // // TITLE;                                        //
-  textSize(15); textFont('Times New Roman');          //
-  //https://p5js.org/reference/p5/textFont/           //
-  fill(255,255,0); stroke(0,0,0); strokeWeight(4);    //
-  text('interQUACKtivity',265, height-7);             //
+  // // TITLE;
+  textSize(15); textFont('Times New Roman'); 
+  //https://p5js.org/reference/p5/textFont/ 
+  fill(255,255,0); stroke(0,0,0); strokeWeight(4);
+  text('interQUACKtivity',265, height-7);
   //##################################################//
 }
 
 function draw() {
-  //######## DRAW SLIDERS #################################//
-  let a = rangeSlider.value(); // assign slider variables  //
-  let b = duckCountSlider.value();                         //
-  // let c = scalarSlider.value(); REMOVED                 //
-  range = 255-a; // assign slider values!                  //
-  duckcount = int((b*50)/255);                             //
-  //scaler = int((c/255)*15+5); REMOVED                    //
-  //#######################################################//
-  //######## DRAW CAMERA CAPTURE #############################################################//
-  translate(width,0); scale(-1,1);                                                            //
-  //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0    //
-  image(capture, 0, 0); // show the live camera                                               //                                                
-  video.loadPixels();                                                                         //
-  preFrame.loadPixels();// NEW from https://editor.p5js.org/bestesaylar/sketches/WFsPqG-8A    //
-  //##########################################################################################//
-  //####### comparison variables re-initialised ##########################//
-  compdiff = [0];                                                         //
-  compx = [0];                                                            //
-  compy = [0];                                                            //
-  // initialise the comparison arrays to have the correct amount of spaces//
-  for (n = 0; n < duckcount-1; n++){                                      //
-    append(compx,0);                                                      //
-    append(compy,0);                                                      //
-    append(compdiff,0);                                                   //                                                            //
-  }                                                                       //
-  //######################################################################//
-  //######## TRAVERSE VIDEO TO DETECT MOTION #######################################//
-  for (let y = 0; y < video.height; y++) {                                          //
-    for (let x = 0; x < video.width; x++) {                                         //
-      var index = (x + y*video.width)*4;                                            //
-      //**********************************bestesaylar code*/                        //
-      let pr = preFrame.pixels[index + 0];                                          //
-      let pg = preFrame.pixels[index + 1];                                          //
-      let pb = preFrame.pixels[index + 2];                                          //
-      // let pbright = (pr + pg + pb) / 3; // makes a greyscale image               //
-      let r = video.pixels[index + 0];                                              //
-      let g = video.pixels[index + 1];                                              //
-      let b = video.pixels[index + 2];                                              //
-      // let bright = (r + g + b) / 3; // makes a greyscale image                   //
-      var diff = dist(r, g, b, pr, pg, pb);                                         //
-      // https://p5js.org/reference/p5/dist/                                        //
-      // this achieves what I was otherwise jankilly writing boolean statements for //
-			//*****************************************************/                      //
-      if (diff>range){                                                              //
-        // // create moving ducks within range                                      //
-        // redDuck = new Duck(x*scaler,y*scaler);                                   //
-        // redDuck.show(); // show ducks within range                               //
-        for (let n = 0; n < compx.length; n++){ // traverse the comparison array    //
-          if (diff >= compdiff[n]){                                                 //
-            // > upon each iteration i will find the most moved pixel,              //
-            // storing the greatest value in comx,compy,compdiff.                   //    
-            compdiff[n] = int(diff);                                                //  
-            compx[n] = int(x);                                                      //
-            compy[n] = int(y);                                                      //
-            //needs to break so as not to overwrite the same pixel into the code    //
-            break;                                                                  //
-          } 
-        }                                                                           //                                           
-      }                                                                             // 
-    }                                                                               // 
-  }                                                                                 //
-  //################################################################################//
-  //######## ADD MOST MOVED POSITIONS TO MOVED ARRAYS ##################################################### 
-  for (let n = 0; n < compx.length; n++){ // traverse the comparison array                              //#
-    // AFTER ive looked through all the pixels and then i add to the xmoved,ymoved and diff moves arrays//#
-    // xmoved.push(compx[n]);                                                                           //#
-    // ymoved.push(compy[n]);                                                                           //#
-    // diffmoved.push(compdiff[n]);                                                                     //#
-    append(xmoved,compx[n]);                                                                            //#
-    append(ymoved,compy[n]);                                                                            //#
-    append(diffmoved,compdiff[n]);                                                                      //#
-    if (xmoved.length > maxDucks){                                                                      //#
-      xmoved.shift();                                                                                   //#
-      ymoved.shift();                                                                                   //#
-      diffmoved.shift();                                                                                //#
-    }                                                                                                   //#
-  }                                                                                                     //#
+  // assign slider variables
+  let a = rangeSlider.value();
+  let b = duckCountSlider.value();
+  // let c = scalarSlider.value();
+  // assign slider values!
+  range = 255-a;
+  duckcount = int((b*50)/255);
+  //scaler = int((c/255)*15+5);
 
-  //######## takes the current capture and loads it into preFarme for next iteration ############
-  preFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);     //#
+  //background(255);
+  translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
+  image(capture, 0, 0); // show the live camera
+  video.loadPixels();
+  preFrame.loadPixels();// NEW from https://editor.p5js.org/bestesaylar/sketches/WFsPqG-8A
+  compdiff = [0]; 
+  compx = [0];
+  compy = [0];
+  for (n = 0; n < duckcount-1; n++){ // initialise the comparison arrays to have the correct amount of spaces.
+    compx.push(0);
+    compy.push(0);
+    compdiff.push(0);
+  }
+  for (let y = 0; y < video.height; y++) {
+    for (let x = 0; x < video.width; x++) {
+      var index = (x + y*video.width)*4;
+      // ###################################################################################################### bestesaylar codelet pr = preFrame.pixels[index + 0];
+      let pr = preFrame.pixels[index + 0];
+      let pg = preFrame.pixels[index + 1];
+      let pb = preFrame.pixels[index + 2];
+      // let pbright = (pr + pg + pb) / 3; // makes a greyscale image
 
-  //######## now that i have assigned the positions of most moved positions I can draw the ducks#
-  for (let idx = 0; idx < xmoved.length; idx++){                                              //#
-    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-3)){                    //#
-      redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);                              //#
-      redDuck.show();                                                                         //#
+      let r = video.pixels[index + 0];
+      let g = video.pixels[index + 1];
+      let b = video.pixels[index + 2];
+      // let bright = (r + g + b) / 3; // makes a greyscale image
+			
+      var diff = dist(r, g, b, pr, pg, pb); // https://p5js.org/reference/p5/dist/ dist achiebes what i was jankilly writing boolean statements for
+			if (diff>range){
+        // redDuck = new Duck(x*scaler,y*scaler); // create moving ducks within range
+        // redDuck.show(); // show ducks within range
+        for (let n = 0; n < compx.length; n++){ // traverse the comparison array 
+          if (diff >= compdiff[n]){
+            // > upon each iteration i will find the most moved pixel, 
+            // storing the greatest value in comx,compy,compdiff. 
+            compdiff[n] = int(diff);
+            compx[n] = int(x);
+            compy[n] = int(y);
+            break;
+            // until ive looked through all the pixels and then i add them to the xmoved,ymoved and diff moves arrays.
+          }
+        }
+        
+      }
+      // noStroke();
+      // rect(x * scaler, y * scaler, scaler, scaler);
     }
   }
-  
-  //******** test text ****************************************************************************
-  // translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
+  for (let n = 0; n < compx.length; n++){ // traverse the comparison array 
+    // AFTER ive looked through all the pixels and then i add to the xmoved,ymoved and diff moves arrays.
+    xmoved.push(compx[n]);
+    ymoved.push(compy[n]);
+    diffmoved.push(compdiff[n]);
+  }
+  preFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);// takes the current capture and loads it into preFarme for next iteration
+  // now that i have assigned the positions of most moved positions i can draw the ducks
+  for (let idx = 0; idx < xmoved.length; idx++){
+    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-2)){
+      redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);
+      redDuck.show();
+    }
+  }
+  // test text
+  translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
   // text(xmoved[0]+', '+ymoved[0],20,20)
   // text('a:'+range+', b:'+duckcount+', c:'+scaler,20,20)
 

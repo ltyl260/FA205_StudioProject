@@ -134,7 +134,7 @@
 // >>append(xmoved,compx[n]);                                                                       //#
 // >>append(ymoved,compy[n]);                                                                       //#
 // >>append(diffmoved,compdiff[n]);
-// now using shift i can 
+
 var video;
 var scaler = 15; // how pixelated is the screen Very(20) - impossibly detailed (1); 
 var duckScaler = 20;
@@ -150,7 +150,7 @@ var duckcount = 10; //100 runs slow!
 let rangeSlider;
 let duckCountSlider;
 let scalarSlider;
-var maxDucks = 200;
+var maxDucks = 100;
 
 class Duck {
   constructor(x,y){
@@ -293,9 +293,16 @@ function draw() {
   compy = [0];                                                            //
   // initialise the comparison arrays to have the correct amount of spaces//
   for (n = 0; n < duckcount-1; n++){                                      //
-    append(compx,0);                                                      //
-    append(compy,0);                                                      //
-    append(compdiff,0);                                                   //                                                            //
+    append(compx,0);                                                        //
+    append(compy,0);                                                        //
+    append(compdiff,0);                                                        //
+    // compy.pop(0);                                                        //
+    // compdiff.pop(0); 
+    if (xmoved.length > maxDucks){
+      // xmoved.pop(0);
+      // ymoved.pop(0);
+      diffmoved.pop(0);
+    }                                                    //
   }                                                                       //
   //######################################################################//
   //######## TRAVERSE VIDEO TO DETECT MOTION #######################################//
@@ -328,7 +335,7 @@ function draw() {
             compy[n] = int(y);                                                      //
             //needs to break so as not to overwrite the same pixel into the code    //
             break;                                                                  //
-          } 
+          }                                                                         //
         }                                                                           //                                           
       }                                                                             // 
     }                                                                               // 
@@ -337,17 +344,12 @@ function draw() {
   //######## ADD MOST MOVED POSITIONS TO MOVED ARRAYS ##################################################### 
   for (let n = 0; n < compx.length; n++){ // traverse the comparison array                              //#
     // AFTER ive looked through all the pixels and then i add to the xmoved,ymoved and diff moves arrays//#
-    // xmoved.push(compx[n]);                                                                           //#
-    // ymoved.push(compy[n]);                                                                           //#
-    // diffmoved.push(compdiff[n]);                                                                     //#
-    append(xmoved,compx[n]);                                                                            //#
-    append(ymoved,compy[n]);                                                                            //#
-    append(diffmoved,compdiff[n]);                                                                      //#
-    if (xmoved.length > maxDucks){                                                                      //#
-      xmoved.shift();                                                                                   //#
-      ymoved.shift();                                                                                   //#
-      diffmoved.shift();                                                                                //#
-    }                                                                                                   //#
+    // xmoved.push(compx[n]);                                                                              //#
+    // ymoved.push(compy[n]);                                                                              //#
+    // diffmoved.push(compdiff[n]); 
+    append(xmoved,compx[n]);                                                                       //#
+    append(ymoved,compy[n]);                                                                       //#
+    append(diffmoved,compdiff[n]);                                                                       //#
   }                                                                                                     //#
 
   //######## takes the current capture and loads it into preFarme for next iteration ############
@@ -355,7 +357,7 @@ function draw() {
 
   //######## now that i have assigned the positions of most moved positions I can draw the ducks#
   for (let idx = 0; idx < xmoved.length; idx++){                                              //#
-    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-3)){                    //#
+    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-2)){                    //#
       redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);                              //#
       redDuck.show();                                                                         //#
     }
