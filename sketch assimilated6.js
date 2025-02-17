@@ -238,23 +238,21 @@ function setup() {
   video.hide();
   preFrame = createImage(video.width, video.height);
   let redDuck = Duck;
-  //##### SLIDER/TITLE SETUP #########################//
-  // let rangeSlider ;                                //
-  rangeSlider = createSlider(0, 255,100);             //
-  rangeSlider.position(50, height);                   //
-  rangeSlider.size(80);                               //  
-  text('sensitivity to motion',(40),height-3);        //
-  // let duckCountSlider;                             //  
-  duckCountSlider = createSlider(0, 255,51);          //
-  duckCountSlider.position((width-125), height);      //
-  duckCountSlider.size(80);                           //
-  text('motion points captured',(width-150),height-3);//
-  // // let scalarSlider; REMOVED messes with duck pos//
-  // scalarSlider = createSlider(0, 255,255/2.6);     //
-  // scalarSlider.position(width-90, height);         //
-  // scalarSlider.size(80);                           //
-  // text('scalar',((width-65)),height-3);            //
-  //##################################################//
+  // let rangeSlider;
+  rangeSlider = createSlider(0, 255,100);
+  rangeSlider.position(50, height);
+  rangeSlider.size(80);
+  text('sensitivity to motion',(40),height-3);
+  // let duckCountSlider;
+  duckCountSlider = createSlider(0, 255,51);
+  duckCountSlider.position((width-125), height);
+  duckCountSlider.size(80);
+  text('motion points captured',(width-150),height-3);
+  // // let scalarSlider;
+  // scalarSlider = createSlider(0, 255,255/2.6);
+  // scalarSlider.position(width-90, height);
+  // scalarSlider.size(80);
+  // text('scalar',((width-65)),height-3);
 }
 
 function draw() {

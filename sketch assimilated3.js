@@ -1,7 +1,3 @@
-// *link: https://ltyl260.github.io/FA205_StudioProject/*
-// # interQUACKtivity: aka FA205_StudioProject
-
-// for codeblocks in markdown https://www.google.com/search?q=codeblocks+in+markdown+format&oq=codeblocks+in+markdown+format&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yDQgCEAAYhgMYgAQYigUyDQgDEAAYhgMYgAQYigUyDQgEEAAYhgMYgAQYigUyCggFEAAYgAQYogTSAQg2NzUzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
 // taken from "camera save photo" by joshmiller
 // https://editor.p5js.org/joshmiller/sketches/HyyWhllFX
 // trying to find differences between screenshot and live
@@ -25,9 +21,6 @@
 // ## fourth step: ducks! ## 
 // instead of the motion showing up as red pixels id like to have ducks appear
 // this requires reusing my duck class and fitting it to this purpose. Initialising a duck will only require x and y positions, i am not worrying about a duck existing for longer than movement is detected at this stage they will just appear instead of the pixels, size will be set with the scalar just like the pixels are in the example
-// the fill from the ducks eyes was turning the rest of the duck white because of the order in which thing were called... that was fun 2hrs to fix...
-// > fill(255, 0, 0); // for some reason if this is ontop of the call to redDuck the red becomes white.. weird... because of teh eye whites being last in the showduck constructor call...
-
 // ### forth issue: ducks arent appearing at desire x,y points ###
 // i have manually multiplied the x and y by factors of 4 - 
 // looks like the loops traverse the size of the capture and not the size of the screen, multiply by scaler to fix :)
@@ -68,80 +61,20 @@
 // >}
 // That was the intention but it seems to get some randome points upon intitialisation and then does not add any further points, also its still adding points to the array so it takes forever.
 // I need to take the most moved point within the inital (diff>range) if loop to avoid unnecessary work for the sketch.
-// #### why didnt this work?: ####
-// because im taking several ducks within the loop and repoalcinging them over and over...
+// why didnt this work?: because im taking several ducks within the loop and repoalcinging them over and over...
 // > I need to have a list of ducks (external to the draw function) that i append to each time the draw function detects movement.
-// > upon each iteration i will find the most moves pixel, storing the greatest value in comx,compy,compdiff. 
-// > AFTER i have looked through all the pixels and then i add them to the xmoved,ymoved and diff moves arrays.
-// > important to assign compdiff to equal 0 in early draw function, needs to be redefined every iteration!
-// > ALSO i made the choice to only multiply the x and y values by the scaler required for them to be displayed at the correct screen location until they are drawn as ducks, this saves extra caluclations that dont really matter for this use but it was a consideration made...
-
-// ### now that it works with 1 duck! ###
-// >I can finally focus on flipping the camera so it refelcts the viewer like a mirror and its alot less confusing to interact with!
-// >>translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0  
-// what if i make it work with teh 5 most moved ducks?
-// >my first thought was to have a global variable for number of ducks i look at
-// >var duckcount = 5;
-// but it occured to me that it would be easiest to have compx,compy and compdiff also as arrays but to set the size!
-// > compdiff = [0]; 
-// > compx = [0];
-// > compy = [0];
-// > for (n = 0; n < duckcount; n++){ // initialise the comparison arrays to have the correct amount of spaces.
-// >    compx.push(0);
-// >    compy.push(0);  
-// >    compdiff.push(0);
-// > }
-// this way i can have the comparison variables as arrays to traverse but also i can chnage the number of ducks saved per iteration with a single variable duckcount! also this resets the comparison array each iteration!!!
-// *note: for duck count to reflect the number of ducks pusshed each iteration needed to change my initialising for loop:
-// > for (n = 0; n < duckcount-1; n++){ // initialise the comparison arrays to have the correct amount of spaces.*
-
-// ### ducks appear even if not moving... ###
-// the sensitivity of the range for movement combined with scalar for the capture resolution and the initial amount of ducks all combine to affect the initial state of ducks on the screen. 
-// in a blank setting no ducks will show up but as soon as theres colour and movement at least 1 duck will pop up but i think this adds to the sketch so im not ging to work hard to undo it.
-// the only issue i have with it is one duck that upon initialisation likes to generate at 0,0 before any motion has been captured, i have hardcoded the soloution...
-// >for (let idx = 0; idx < xmoved.length; idx++){  
-// >  if (xmoved[idx]!=0 && ymoved[idx]!=0){   
-// >    redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);
-// >    redDuck.show();
-// >  }
-// >} 
-
-// ### Maybe i can embrace this variability by allowing the user to ineract with it! ###
-// https://p5js.org/reference/p5/createSlider/
-// i can have 3 sliders for range, scalar and duckcount!
-// > text('a:'+a+', b:'+b+', c:'+c,20,20)
-// from this i can see that *a: 255, b: 255, c:255* the sliders go between 0 ans 255
-// **range** goes between 0(high sensitivity)-255(no sensitivity)
-// > so rangeSlider can simply be set to the value of a;
-// **duckCount** slows things down a tonne at 100, so ill start with a cap at 50 ducks
-// > since duckCount will go between 0-50 ans the slider goes from 0-255
-// > so duckCountSlider can be ((b*50)/255);
-// **scalar** goes between Very(20) - impossibly detailed (1)
-// we CANNOT have c = 0 as the sketch will not work, even at 1 the sketch will run WAY too slowly
-// >so we will have an effective rnage of 5 - 20
-// >and let scalarSlider = int((c/255)*15+5);
-// upon second thought messing with the scalar isnt a good idea it leads to the same issue of the ducks not being in the 
-// >*note: the range is inversely proportional to the sketches sensitivity to motion so i need to change that*
-// >>**range** goes between 0(high sensitivity)-255(no sensitivity)
-// >> so rangeSlider can simply be set to the value of **255 - a**;
-
-
 
 var video;
-var scaler = 15; // how pixelated is the screen Very(20) - impossibly detailed (1); 
+var scaler = 20; // how pixelated is the screen Very(20) - impossibly detailed (1); 
 var duckScaler = 20;
 var preFrame;
-var range = 50; // range for motion detection 0(high sensitivity)-255(no sensitivity)
+var range = 100; // rnage for motion detection
 let xmoved = [0];
 let ymoved = [0];
 let diffmoved = [0];
 let compdiff;
 let compx;
 let compy;
-var duckcount = 10; //100 runs slow!
-let rangeSlider;
-let duckCountSlider;
-let scalarSlider;
 
 class Duck {
   constructor(x,y){
@@ -229,7 +162,7 @@ class Duck {
 }
 
 function setup() {
-  createCanvas(640, 500);
+  createCanvas(640, 480);
   pixelDensity(1);
   capture = createCapture(VIDEO);//for better definition for interactions
   capture.hide(); // hide it
@@ -238,48 +171,14 @@ function setup() {
   video.hide();
   preFrame = createImage(video.width, video.height);
   let redDuck = Duck;
-  //##### SLIDER/TITLE SETUP #########################//
-  // let rangeSlider ;                                //
-  rangeSlider = createSlider(0, 255,100);             //
-  rangeSlider.position(50, height);                   //
-  rangeSlider.size(80);                               //  
-  text('sensitivity to motion',(40),height-3);        //
-  // let duckCountSlider;                             //  
-  duckCountSlider = createSlider(0, 255,51);          //
-  duckCountSlider.position((width-125), height);      //
-  duckCountSlider.size(80);                           //
-  text('motion points captured',(width-150),height-3);//
-  // // let scalarSlider; REMOVED messes with duck pos//
-  // scalarSlider = createSlider(0, 255,255/2.6);     //
-  // scalarSlider.position(width-90, height);         //
-  // scalarSlider.size(80);                           //
-  // text('scalar',((width-65)),height-3);            //
-  //##################################################//
+  
 }
 
 function draw() {
-  // assign slider variables
-  let a = rangeSlider.value();
-  let b = duckCountSlider.value();
-  // let c = scalarSlider.value();
-  // assign slider values!
-  range = 255-a;
-  duckcount = int((b*50)/255);
-  //scaler = int((c/255)*15+5);
-
   //background(255);
-  translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
-  image(capture, 0, 0); // show the live camera
+  image(capture, 0, 0, width, height); // show the live camera
   video.loadPixels();
   preFrame.loadPixels();// NEW from https://editor.p5js.org/bestesaylar/sketches/WFsPqG-8A
-  compdiff = [0]; 
-  compx = [0];
-  compy = [0];
-  for (n = 0; n < duckcount-1; n++){ // initialise the comparison arrays to have the correct amount of spaces.
-    compx.push(0);
-    compy.push(0);
-    compdiff.push(0);
-  }
   for (let y = 0; y < video.height; y++) {
     for (let x = 0; x < video.width; x++) {
       var index = (x + y*video.width)*4;
@@ -295,47 +194,51 @@ function draw() {
       // let bright = (r + g + b) / 3; // makes a greyscale image
 			
       var diff = dist(r, g, b, pr, pg, pb); // https://p5js.org/reference/p5/dist/ dist achiebes what i was jankilly writing boolean statements for
-			if (diff>range){
-        // redDuck = new Duck(x*scaler,y*scaler); // create moving ducks within range
-        // redDuck.show(); // show ducks within range
-        for (let n = 0; n < compx.length; n++){ // traverse the comparison array 
-          if (diff >= compdiff[n]){
-            // > upon each iteration i will find the most moved pixel, 
-            // storing the greatest value in comx,compy,compdiff. 
-            compdiff[n] = int(diff);
-            compx[n] = int(x);
-            compy[n] = int(y);
-            break;
-            // until ive looked through all the pixels and then i add them to the xmoved,ymoved and diff moves arrays.
+			// if (diff<range){ // if diference is within range
+      //   fill(r,g,b);
+      // }
+      if (diff>range){
+        // redDuck = new Duck(x*scaler,y*scaler);
+        // redDuck.show();
+        // if the point 'moves' we add it to the moved array
+        // we only want to add the MOST moved points
+        compdiff = diffmoved[0];
+        compx = xmoved[0];
+        compy = ymoved[0]; //not needed since we are only looking at ONE point
+        // we loop through the stored array
+        for (v =1; v<=xmoved.length; v++){
+          if(diffmoved[v]<diff){
+            diffmoved[v] = diff;
+            xmoved[v] = x*scalar;
+            ymoved[v] = y*scalar;
           }
         }
-        
+        // once we have 
+          xmoved.push(x*scaler);
+          ymoved.push(y*scaler);
+          diffmoved.push(diff);
+        // fill(255, 0, 0); // for some reason if this is ontop of the call to redDuck the red becomes white.. weird... because of teh eye whites being last in the showduck constructor call...
       }
       // noStroke();
       // rect(x * scaler, y * scaler, scaler, scaler);
     }
   }
-  for (let n = 0; n < compx.length; n++){ // traverse the comparison array 
-    // AFTER ive looked through all the pixels and then i add to the xmoved,ymoved and diff moves arrays.
-    xmoved.push(compx[n]);
-    ymoved.push(compy[n]);
-    diffmoved.push(compdiff[n]);
-  }
-  preFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);// takes the current capture and loads it into preFarme for next iteration
-  // now that i have assigned the positions of most moved positions i can draw the ducks
-  for (let idx = 0; idx < xmoved.length; idx++){
-    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-2)){
-      redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);
-      redDuck.show();
+  compdiff = diffmoved[0];
+  compx = xmoved[0];
+  compy = ymoved[0];
+  for (v =1; v<=xmoved.length; v++){
+    if(diffmoved[v]>compdiff){
+      compdiff = diffmoved[v];
+      compx = xmoved[v];
+      compy = ymoved[v];
     }
+    //redDuck = new Duck(xmoved[v],ymoved[v]);
+    redDuck = new Duck(compx,compy);
+    redDuck.show();
+    // text(xmoved,20,20)
   }
-  // test text
-  translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
-  // text(xmoved[0]+', '+ymoved[0],20,20)
-  // text('a:'+range+', b:'+duckcount+', c:'+scaler,20,20)
+  // text('lalalala',20,20);
+  preFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);// takes the current capture and loads it into preFarme for next iteration
 
 }
-
-
-
 

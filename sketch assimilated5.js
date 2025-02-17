@@ -1,7 +1,3 @@
-// *link: https://ltyl260.github.io/FA205_StudioProject/*
-// # interQUACKtivity: aka FA205_StudioProject
-
-// for codeblocks in markdown https://www.google.com/search?q=codeblocks+in+markdown+format&oq=codeblocks+in+markdown+format&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIICAEQABgWGB4yDQgCEAAYhgMYgAQYigUyDQgDEAAYhgMYgAQYigUyDQgEEAAYhgMYgAQYigUyCggFEAAYgAQYogTSAQg2NzUzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
 // taken from "camera save photo" by joshmiller
 // https://editor.p5js.org/joshmiller/sketches/HyyWhllFX
 // trying to find differences between screenshot and live
@@ -109,26 +105,10 @@
 // ### Maybe i can embrace this variability by allowing the user to ineract with it! ###
 // https://p5js.org/reference/p5/createSlider/
 // i can have 3 sliders for range, scalar and duckcount!
-// > text('a:'+a+', b:'+b+', c:'+c,20,20)
-// from this i can see that *a: 255, b: 255, c:255* the sliders go between 0 ans 255
-// **range** goes between 0(high sensitivity)-255(no sensitivity)
-// > so rangeSlider can simply be set to the value of a;
-// **duckCount** slows things down a tonne at 100, so ill start with a cap at 50 ducks
-// > since duckCount will go between 0-50 ans the slider goes from 0-255
-// > so duckCountSlider can be ((b*50)/255);
-// **scalar** goes between Very(20) - impossibly detailed (1)
-// we CANNOT have c = 0 as the sketch will not work, even at 1 the sketch will run WAY too slowly
-// >so we will have an effective rnage of 5 - 20
-// >and let scalarSlider = int((c/255)*15+5);
-// upon second thought messing with the scalar isnt a good idea it leads to the same issue of the ducks not being in the 
-// >*note: the range is inversely proportional to the sketches sensitivity to motion so i need to change that*
-// >>**range** goes between 0(high sensitivity)-255(no sensitivity)
-// >> so rangeSlider can simply be set to the value of **255 - a**;
-
-
+//  
 
 var video;
-var scaler = 15; // how pixelated is the screen Very(20) - impossibly detailed (1); 
+var scaler = 20; // how pixelated is the screen Very(20) - impossibly detailed (1); 
 var duckScaler = 20;
 var preFrame;
 var range = 50; // range for motion detection 0(high sensitivity)-255(no sensitivity)
@@ -139,9 +119,6 @@ let compdiff;
 let compx;
 let compy;
 var duckcount = 10; //100 runs slow!
-let rangeSlider;
-let duckCountSlider;
-let scalarSlider;
 
 class Duck {
   constructor(x,y){
@@ -229,7 +206,7 @@ class Duck {
 }
 
 function setup() {
-  createCanvas(640, 500);
+  createCanvas(640, 480);
   pixelDensity(1);
   capture = createCapture(VIDEO);//for better definition for interactions
   capture.hide(); // hide it
@@ -238,35 +215,9 @@ function setup() {
   video.hide();
   preFrame = createImage(video.width, video.height);
   let redDuck = Duck;
-  //##### SLIDER/TITLE SETUP #########################//
-  // let rangeSlider ;                                //
-  rangeSlider = createSlider(0, 255,100);             //
-  rangeSlider.position(50, height);                   //
-  rangeSlider.size(80);                               //  
-  text('sensitivity to motion',(40),height-3);        //
-  // let duckCountSlider;                             //  
-  duckCountSlider = createSlider(0, 255,51);          //
-  duckCountSlider.position((width-125), height);      //
-  duckCountSlider.size(80);                           //
-  text('motion points captured',(width-150),height-3);//
-  // // let scalarSlider; REMOVED messes with duck pos//
-  // scalarSlider = createSlider(0, 255,255/2.6);     //
-  // scalarSlider.position(width-90, height);         //
-  // scalarSlider.size(80);                           //
-  // text('scalar',((width-65)),height-3);            //
-  //##################################################//
 }
 
 function draw() {
-  // assign slider variables
-  let a = rangeSlider.value();
-  let b = duckCountSlider.value();
-  // let c = scalarSlider.value();
-  // assign slider values!
-  range = 255-a;
-  duckcount = int((b*50)/255);
-  //scaler = int((c/255)*15+5);
-
   //background(255);
   translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
   image(capture, 0, 0); // show the live camera
@@ -324,16 +275,16 @@ function draw() {
   preFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);// takes the current capture and loads it into preFarme for next iteration
   // now that i have assigned the positions of most moved positions i can draw the ducks
   for (let idx = 0; idx < xmoved.length; idx++){
-    if ((xmoved[idx]!=0 && ymoved[idx]!=0)&&(ymoved[idx]<video.height-2)){
+    if (xmoved[idx]!=0 && ymoved[idx]!=0){
       redDuck = new Duck(xmoved[idx]*scaler,ymoved[idx]*scaler);
       redDuck.show();
     }
   }
   // test text
-  translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
+  //translate(width,0); scale(-1,1); //flip the camera to be less confusing https://editor.p5js.org/js6450/sketches/ls5ETAfd0
   // text(xmoved[0]+', '+ymoved[0],20,20)
-  // text('a:'+range+', b:'+duckcount+', c:'+scaler,20,20)
-
+  //text(compdiff[0],20,20)
+  
 }
 
 
